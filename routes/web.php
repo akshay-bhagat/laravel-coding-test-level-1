@@ -13,6 +13,7 @@ use App\Http\Controllers\EventController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+require __DIR__.'/auth.php';
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,7 +33,6 @@ Route::put('events/{id}/edit',      [EventController::class, 'update'])->name('e
 Route::post('events/event_store',   [EventController::class, 'store'])->name('events.store');
 Route::delete('events/delete/{id}', [EventController::class, 'destroy'])->name('events.destroy');
 
-require __DIR__.'/auth.php';
 
 Auth::routes();
 

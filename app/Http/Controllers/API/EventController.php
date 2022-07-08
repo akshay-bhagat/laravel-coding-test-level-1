@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Event;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class EventController extends BaseController
 {
@@ -179,4 +180,45 @@ class EventController extends BaseController
         }
         return $this->handleResponse([], 'Event deleted!');
     }
+
+    /**
+     * Server side Events data caching with redis
+     * 
+     * Retrieve all events from the cache or, if they don't exist,
+     * Retrieve them from the database and add them to the cache.
+     */
+    public function cacheEvents()
+    {
+        try {
+            $events = Cache::remember('events', now()->addMinutes(300), function ()
+            {   
+                $data = array();
+                $eventData = Event::orderBy('createdAt', 'desc')->take(30)->get();
+
+                foreach ($eventData as $event) {
+                    $data[] = array(
+                        'id' => $event->id,
+                        'name' => $event->name,
+                        'slug' => $event->slug,
+                        'startAt' => $event->startAt,
+                        'endAt' => $event->endAt,
+                        'updatedAt' => $event->updatedAt,
+                        'createdAt' => $event->createdAt,
+                    );
+                }
+                return $data;
+            });
+
+            if ($events) {
+
+               return $this->handleResponse(new EventResource($events), 'Event retrived successfully');
+            }
+            return $this->handleError('Event not found!');
+            
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->handleError($th, 'Event not found!', 501);
+        }
+    }
+
 }
