@@ -49,17 +49,18 @@ class EventController extends BaseController
     public function store(Request $request)
     {
         $input = $request->all();
+        $input['startAt'] = date("Y-m-d H:i:s", strtotime($request->startAt));
+        $input['endAt'] = date("Y-m-d H:i:s", strtotime($request->endAt));
         $validator = Validator::make($input, [
             'name' => 'required',
             'slug' => 'required|unique:events|max:255',
-            'startAt' => 'date_format:Y-m-d H:i:s|after_or_equal:today',
-            'endAt' => 'date_format:Y-m-d H:i:s|after:startAt',
+            'startAt' => 'date_format:Y-m-d H:i:s',
+            'endAt' => 'date_format:Y-m-d H:i:s',
         ]);
 
         if($validator->fails()){
             return $this->handleError($validator->errors());       
         }
-
         $uuid = Str::uuid()->toString();
         $now = Carbon::now()->format('Y-m-d H:i:s');
         $input['id'] = $uuid;
@@ -119,7 +120,7 @@ class EventController extends BaseController
         }
         $event->save();
         $event->refresh();
-     
+
         return $this->handleResponse(new EventResource($event), 'Event successfully updated!');
     }
 
@@ -136,7 +137,7 @@ class EventController extends BaseController
 
         $validator = Validator::make($input, [
             'name' => 'required',
-            'slug' => 'required|unique:events|max:255'
+            'slug' => 'required|max:255'
         ]);
 
         $now = Carbon::now()->format('Y-m-d H:i:s');
