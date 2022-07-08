@@ -29,4 +29,7 @@ Route::group(['prefix' => $apiVersion], function ($router) {
     $router->put('events/{id}', [EventController::class, 'update'])->name('update_event');   // Create event if not exist, else update the Event  
     $router->patch('events/{id}', [EventController::class, 'partialUpdate'])->name('update_partial');   // Partially update Event
     $router->delete('events/{id}', [EventController::class, 'destroy'])->name('delete_event');   // Soft delete an Event 
+    
+    //Server side data caching with redis
+    $router->get('/redis/events', [EventController::class, 'cacheEvents'])->name('cache_events');
 });

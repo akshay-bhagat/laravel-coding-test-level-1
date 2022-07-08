@@ -6,6 +6,7 @@
             <div class="pull-left">
                 <h2>Edit Event</h2>
             </div>
+            <br/>
             <div class="pull-right">
                 <a class="btn btn-primary" href="{{ route('events.index') }}"> Back</a>
             </div>

@@ -60,3 +60,6 @@
 
 - Push all the codes into the your remote repository
 - Make sure the repository is public
+
+## All above Tests are completed in this Repo.
+- Also some [Screenshots](https://github.com/akshay-bhagat/laravel-coding-test-level-1\Screenshots) are added in this repo for a quick view.
