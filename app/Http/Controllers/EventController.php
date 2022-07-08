@@ -1,11 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 use App\Models\Event;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Mail\Event as EventNotification;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Client\ConnectionException;
 class EventController extends Controller
 {
     /**
@@ -37,6 +41,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $emailTo['email'] = 'anc-test@yopmail.com';
         $request = Request::create('/api/v1/events', 'POST',[
             'name'=> $request->name,
             'slug'=> $request->slug,
@@ -46,6 +51,9 @@ class EventController extends Controller
       
           $response = Route::dispatch($request);
           if ($response->status() == 200 && $response->getData()->success) {
+            
+            // Send Email notification
+            $this->sendMail($emailTo, $request);
             return redirect()->route('events.index')->with('success', $response->getData()->message);
            }
 
@@ -119,4 +127,25 @@ class EventController extends Controller
 
           return redirect()->back()->withErrors($response->getData()->message);
     }
+
+    public function sendMail($emailTo, $emailData) 
+{
+    $validator = Validator::make($emailTo, [
+         'email' => 'required|email'
+    ]);
+
+    if ($validator->fails()) {
+        return new JsonResponse(['success' => false, 'message' => $validator->errors()], 422);
+    }  
+
+        Mail::to($emailTo)->send(new EventNotification($emailTo, $emailData));
+        return new JsonResponse(
+            [
+                'success' => true, 
+                'message' => "A new Event was created."
+            ], 
+            200
+        );
+    
+}
 }
