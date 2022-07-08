@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Cache;
 
 class EventController extends BaseController
 {
+
+     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // only authenticated users can create, update and delete events
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the Event.
      *

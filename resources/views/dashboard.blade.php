@@ -57,20 +57,58 @@
     </style>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Dashboard') }}
+            </h2>
+        </div>
+
+        <div style="text-align: right">
+            <!-- Authentication -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+    
+                <x-responsive-nav-link :href="route('logout')"
+                        onclick="event.preventDefault();
+                                    this.closest('form').submit();">
+                    {{ __('Log Out') }}
+                </x-responsive-nav-link>
+            </form>
+        </div>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    You're logged in! This Project is created by <b> Akshay Bhagat </b>. <a class="underline text-sm text-gray-600 hover:text-gray-900" href="https://akshaybhagat.in/" target="_blank">  Click here to connect with me</a>
+                    ## This Project is created by <b> Akshay Bhagat </b>. <a class="underline text-sm text-gray-600 hover:text-gray-900" href="https://akshaybhagat.in/" target="_blank">  Click here to connect with me</a>
 
                     <div class="pull-right">
                         <a class="btn btn-success" href="{{ route('events.index') }}"> {{ __('View Events') }}</a>
                     </div>
+
+                    <hr/>
+                    <hr/>
+                    <br/>
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">## Calling of an external API(s) and display the data in the UI</h2>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 bg-white border-b border-gray-200">
+                            <form action="{{ route('api.search') }}" method="POST">
+                                @csrf
+                
+                                <div class="mb-3">
+                                    <label for="">Search</label>
+                                    <input type="text" class="form-control" name="search">
+                                    Search meals name such as: Moussaka, Corba, Wontons, Pancakes, etc.
+                                </div>
+                
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

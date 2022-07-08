@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Event;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
@@ -129,7 +130,7 @@ class EventController extends Controller
     }
 
     public function sendMail($emailTo, $emailData) 
-{
+    {
     $validator = Validator::make($emailTo, [
          'email' => 'required|email'
     ]);
@@ -147,5 +148,23 @@ class EventController extends Controller
             200
         );
     
-}
+    }
+
+   /**
+    * Used a Public external API to fetch the data,
+    * Also implemented search feature on the API
+    */
+    public function search(Request $request)
+    {
+        $url = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
+        $search_query = $url . $request->search;
+        $client = new Client();
+        $response = $client->request('GET', $search_query);
+        if ($response->getStatusCode()== 200 && $response->getBody()) {
+            $result = json_decode($response->getBody())->meals;
+            return view('events.search', ['mealsData' => $result, 'i' => 0]);
+        }
+
+          return redirect()->back()->withErrors($response->getBody());
+    }
 }

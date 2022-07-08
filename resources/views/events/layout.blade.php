@@ -32,6 +32,18 @@
         <!-- Page Content -->
         <main>
             <div class="container">
+                <div class="" style="text-align: right">
+                    <!-- Authentication -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+            
+                        <x-responsive-nav-link :href="route('logout')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                    </form>
+                </div>
                 @yield('content')
             </div>
         </main>
